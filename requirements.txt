@@ -51,3 +51,4 @@ virtualenvwrapper-win
 wcwidth
 Werkzeug
 xmod
+gunicorn
