@@ -4,7 +4,7 @@ from flask_mysqldb import MySQL
 import hashlib
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
-
+import os
 
 app = Flask(__name__)
 # app.config['MYSQL_HOST'] = 'localhost'
