@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crisis-Connect</title>
+  <!-- Bootstrap 5 CSS link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <!-- Leaflet CSS and JS links -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif; /* Applying Poppins font to all elements */
+    }
+
+
+    body {
+      padding-top: 4.5rem;
+      background-color: #f8f9fa;
+      font-family: "Poppins", sans-serif;
+    }
+
+    .navbar {
+      background-color: #343a40;
+      width: 100%;
+      box-shadow: 0 1px 4px rgb(146 161 176 / 15%);
+    }
+
+    .navbar-brand {
+      color: #ffffff;
+      font-weight: bold;
+    }
+
+    .navbar-toggler-icon {
+      background-color: #ffffff;
+    }
+
+    .nav-link {
+      color: #ffffff;
+      transition: color 0.3s ease;
+    }
+
+    .nav-link:hover {
+      color: #dcdcdc;
+    }
+
+    .content-section {
+      display: none;
+      padding: 20px;
+      margin-top: 20px;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      background-color: #ffffff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #alerts-section {
+      display: block;
+    }
+
+    /* Add any custom styles for your map container here */
+    #map {
+      height: 300px;
+    }
+    .card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));  /* Adjust the minimum and maximum width as needed */
+    gap: 20px;
+}
+
+.card {
+    width: 100%;
+    box-sizing: border-box;
+}
+    .btnblack{
+      color: white;
+      background-color: rgb(48, 41, 41);
+    }
+    .btnblack:hover{
+      background-color: black;
+    }
+
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" style="background-color: white;">
+    <div class="container">
+      <a class="navbar-brand" href="#" style="color: black;">Crisis-Connect</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="#" style="color: black;" onclick="showSection('alerts-section')">Alerts</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" style="color: black;" onclick="showSection('messages-section')">Messages</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" style="color: black;" onclick="showSection('info-section')">Information</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{url_for('regi')}}" style="color: black;" onclick="logout()">Logout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+
+<div class="container mt-4">
+  <!-- <div id="alerts-section" class="content-section">
+    <h2>Alerts Section</h2>
+    <button type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+      Add alert
+    </button>
+    <p>This is the default landing page for Alerts.</p>
+    <div class="card-container">
+        {% for alert in alerts %}
+            <div class="card">
+                <h5 class="card-header">{{ alert[1] }}</h5>
+                <div class="card-body">
+                    <h5 class="card-title">{{ alert[4] }}</h5>
+                    <p class="card-text loc">{{ alert[3] }}</p>
+                    <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#mapModal">Open Maps</a>
+                    <form action="{{ url_for('resolve_alert', alert_id=alert[0]) }}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-primary">Resolved</button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    
+  </div> -->
+  <!-- Add this code inside the appropriate section of your dept.html file -->
+<div id="alerts-section" class="content-section">
+  <h2>Alerts Section</h2>
+  <button type="button" class="btn btn-primary btnblack" data-toggle="button" aria-pressed="false" autocomplete="off" onclick="showAddAlertModal()">
+    Add alert
+  </button>
+  <hr>
+  <!-- <p>This is the default landing page for Alerts.</p> -->
+  <!-- <div class="card-container">
+    {% for alert in alerts %}
+    <div class="card">
+      <h5 class="card-header">{{ alert[1] }}</h5>
+      <div class="card-body">
+        <h5 class="card-title">{{ alert[4] }}</h5>
+        <p class="card-text loc">{{ alert[3] }}</p>
+        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#mapModal">Open Maps</a>
+        <form action="{{ url_for('resolve_alert', alert_id=alert[0]) }}" method="post" style="display:inline;">
+          <button type="submit" class="btn btn-primary">Resolved</button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div> -->
+  <!-- HTML Template -->
+<!-- <div class="card-container">
+  {% for alert in alerts %}
+  <div class="card">
+    <h5 class="card-header">{{ alert[1] }}</h5>
+    <div class="card-body">
+      <p class="card-text loc">{{ alert[3] }}</p>
+      <p class="card-text det">{{alert[5]}}</p>
+      {% set coordinates = alert[4].split(',') %}
+      <a href="#" class="btn btn-primary show-map" data-bs-toggle="modal" data-bs-target="#mapModal" data-lat="{{ coordinates[0] }}" data-lon="{{ coordinates[1] }}">Open Maps</a>
+      <form action="{{ url_for('resolve_alert', alert_id=alert[0]) }}" method="post" style="display:inline;">
+        <button type="submit" class="btn btn-primary">Resolved</button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div> -->
+<div class="card-container">
+  {% for alert in alerts %}
+  <div class="card">
+    <h5 class="card-header">{{ alert[1] }}</h5>
+    <div class="card-body">
+      <p class="card-text loc">Coordiantes are :- {{ alert[3] }}</p>
+      <!-- <p class="card-text det">{{alert[5]}}</p> -->
+      {% set coordinates = alert[3].split(',') %}
+      <!-- <p>{{coordinates[0]}}</p> -->
+      <p>{{alert[4]}}</p>
+      <a href="#" class="btn btn-primary show-map btnblack" data-bs-toggle="modal" data-bs-target="#mapModal" data-lat="{{ coordinates[0] }}" data-lon="{{ coordinates[1] }}">Open Maps</a>
+      <button type="button" class="btn btn-primary get-directions btnblack" data-lat="{{ coordinates[0] }}" data-lon="{{ coordinates[1] }}">Get Directions</button>
+      <hr>
+      <form action="{{ url_for('resolve_alert', alert_id=alert[0]) }}" method="post" style="display:inline;">  
+        <button type="submit" class="btn btn-primary btnblack">Resolved</button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+</div>
+
+<!-- Add Alert Modal -->
+<div class="modal fade" id="addAlertModal" tabindex="-1" aria-labelledby="addAlertModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addAlertModalLabel">Add Alert</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Bootstrap Form for adding alert -->
+        <form id="addAlertForm" action="{{ url_for('add_alert') }}" method="post">
+          <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="alertName" required>
+          </div>
+          <div class="mb-3">
+            <label for="location" class="form-label">Location</label>
+            <input type="text" class="form-control" id="location" name="location" required>
+          </div>
+          <div class="mb-3">
+            <label for="details" class="form-label">Details</label>
+            <input type="text" class="form-control" id="details" name="details" required>
+          </div>
+          <div class="mb-3">
+            <label for="dataReadings" class="form-label">Data Readings</label>
+            <input type="text" class="form-control" id="dataReadings" name="dataReadings" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Add</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showAddAlertModal() {
+    // Show the modal when Add alert button is clicked
+    $('#addAlertModal').modal('show');
+  }
+</script>
+
+  <div id="messages-section" class="content-section">
+    <h2>Messages Section</h2>
+    <p>This section will be displayed when you click on Messages in the navigation bar.</p>
+      <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">User Phone</th>
+                <th scope="col">Details</th>
+                <th scope="col">Location if any</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            {% for message in messages_data %}
+                <tr>
+                    <td>{{ message[1] }}</td>
+                    <td>{{ message[2] }}</td>
+                    <td>{{ message[3] }}</td>
+                    <td>{{ message[4] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  
+  </div>
+  <!-- Add this code inside the appropriate section of your dept.html file -->
+  <div id="info-section" class="content-section">
+    <h2>Information Section</h2>
+    <p>This section will be displayed when you click on Information in the navigation bar.</p>
+    <!-- Replace this line with your search form if needed -->
+    <!-- <input class="form-control" style="margin-bottom: 10px;" type="text" placeholder="Search" aria-label="Search"> -->
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Location</th>
+                <th scope="col">Details</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            {% for info in information_data %}
+                <tr>
+                    <th scope="row">{{ info[2] }}</th>
+                    <td>{{ info[4] }}</td>
+                    <td>{{ info[5] }}</td>
+                    <!-- <td>{{temperature}}</td> -->
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- Map Modal -->
+<div class="modal fade" id="mapModal" tabindex="-1" aria-labelledby="mapModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="mapModalLabel">Location Map</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Map container -->
+        <div id="map"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap 5 JS scripts -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+<script>
+    
+    
+  document.addEventListener('DOMContentLoaded', function () {
+    // Show the default section (Alerts) on page load
+    showSection('alerts-section');
+  });
+
+  function showSection(sectionId) {
+    // Hide all sections
+    $('.content-section').hide();
+
+    // Show the selected section
+    $('#' + sectionId).show();
+  }
+
+  function logout() {
+    // Add your logout logic here
+    alert('Logout clicked');
+  }
+
+
+  // Function to initialize the map
+function initMap(location) {
+  var map = L.map('map').setView(location, 13);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
+
+  // Clear existing layers
+  map.eachLayer(function (layer) {
+    if (layer instanceof L.Marker || layer instanceof L.Popup) {
+      layer.remove();
+    }
+  });
+
+  L.marker(location).addTo(map);
+}
+
+// Handle modal show event
+$('#mapModal').on('show.bs.modal', function (event) {
+  var button = $(event.relatedTarget);
+  var coordinates = button.siblings('.loc').text().split(',').map(parseFloat);
+
+  // Initialize the map with fetched coordinates
+  initMap(coordinates);
+});
+
+// // Handle get directions button click event
+// $('.get-directions').on('click', function () {
+//   var lat = $(this).data('lat');
+//   var lon = $(this).data('lon');
+//   // Construct the Google Maps URL with directions parameters
+//   var googleMapsUrl = 'https://www.google.com/maps/dir/?api=1&destination=' + lat + ',' + lon;
+//   // Open Google Maps in a new tab
+//   window.open(googleMapsUrl, '_blank');
+// });
+// Handle get directions button click event
+$('.get-directions').on('click', function () {
+  // Get the destination coordinates from the button's data attributes
+  var lat = $(this).data('lat');
+  var lon = $(this).data('lon');
+
+  // Check if Geolocation is supported
+  if (navigator.geolocation) {
+    // Get the user's current position
+    navigator.geolocation.getCurrentPosition(function(position) {
+      var userLat = position.coords.latitude;
+      var userLon = position.coords.longitude;
+      //var userLat = '12.2958';
+      //var userLon = '76.6394';
+      console.log(userLat,userLon);
+      // Construct the Google Maps URL with source and destination coordinates
+      var googleMapsUrl = 'https://www.google.com/maps/dir/' + userLat + ',' + userLon + '/' + lat + ',' + lon;
+      
+      // Open Google Maps in a new tab
+      window.open(googleMapsUrl, '_blank');
+    }, function(error) {
+      // Handle error if geolocation fails
+      console.error('Error getting user location:', error);
+    });
+  } else {
+    // Geolocation is not supported
+    console.error('Geolocation is not supported');
+  }
+});
+
+
+  // Function to initialize the map
+  // Function to initialize the map
+// function initMap(location) {
+//   var map = L.map('map').setView(location, 13);
+
+//   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+//     attribution: '© OpenStreetMap contributors'
+//   }).addTo(map);
+
+//   // Clear existing layers
+//   map.eachLayer(function (layer) {
+//     if (layer instanceof L.Marker || layer instanceof L.Popup) {
+//       layer.remove();
+//     }
+//   });
+
+//   L.marker(location).addTo(map);
+// }
+
+
+//   // Handle modal show event
+//   $('#mapModal').on('show.bs.modal', function (event) {
+//     var button = $(event.relatedTarget);
+//     var locationName = button.siblings('.loc').text();
+
+//     // Parse the location and initialize the map
+//     geocodeLocation(locationName);
+//   });
+
+//   // Function to geocode the location and initialize the map
+//   function geocodeLocation(locationName) {
+//     // Using OpenStreetMap Nominatim API for geocoding
+//     var apiUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationName)}`;
+
+//     // Fetch coordinates from the API
+//     fetch(apiUrl)
+//       .then(response => response.json())
+//       .then(data => {
+//         if (data && data.length > 0) {
+//           var coordinates = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+//           initMap(coordinates);
+//         } else {
+//           console.error('Unable to geocode location');
+//         }
+//       })
+//       .catch(error => {
+//         console.error('Error fetching geocoding data', error);
+//       });
+//   }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+threshold_value,result
+550,TRUE
+510,FALSE
+600,TRUE
+700,TRUE
+900,TRUE
+490,FALSE
+520,FALSE

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crisis-Connect</title>
+  <!-- Bootstrap 5 CSS link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <!-- Leaflet CSS and JS links -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <style>
+    body {
+      padding-top: 4.5rem;
+      background-color: #f8f9fa;
+    }
+
+    .navbar {
+      background-color: #343a40;
+    }
+
+    .navbar-brand {
+      color: #ffffff;
+      font-weight: bold;
+    }
+
+    .navbar-toggler-icon {
+      background-color: #ffffff;
+    }
+
+    .nav-link {
+      color: #ffffff;
+      transition: color 0.3s ease;
+    }
+
+    .nav-link:hover {
+      color: #dcdcdc;
+    }
+
+    .content-section {
+      display: none;
+      padding: 20px;
+      margin-top: 20px;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      background-color: #ffffff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #alerts-section {
+      display: block;
+    }
+
+    /* Add any custom styles for your map container here */
+    #map {
+      height: 300px;
+    }
+    .card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));  /* Adjust the minimum and maximum width as needed */
+    gap: 20px;
+}
+
+.card {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="#">Crisis-Connect</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="#" onclick="showSection('alerts-section')">Alerts</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" onclick="showSection('messages-section')">Messages</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" onclick="showSection('info-section')">Information</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" onclick="logout()">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-4">
+  <div id="alerts-section" class="content-section">
+    <h2>Alerts Section</h2>
+    
+    <p>This is the default landing page for Alerts.</p>
+    <div class="card-container">
+        <!-- Replace this section with your Flask template code -->
+        <!-- For demonstration, I'm using static data -->
+        <div class="card">
+            <h5 class="card-header">Alert 1</h5>
+            <div class="card-body">
+                <h5 class="card-title">Emergency Situation</h5>
+                <p class="card-text loc">City Center</p>
+                <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#mapModal">Open Maps</a>
+                
+            </div>
+        </div>
+        <!-- Repeat similar card structures for other alerts -->
+    </div>
+    
+  </div>
+  <div id="messages-section" class="content-section">
+    <h2>Messages Section</h2>
+    <p>This section will be displayed when you click on Messages in the navigation bar.</p>
+    <div class="container mt-5">
+        <form>
+        
+            <div class="form-group">
+                <label for="email">Details:</label>
+                <input type="email" class="form-control" id="details" placeholder="Enter the details">
+            </div>
+            <div class="form-group">
+                <label for="location">Location:</label>
+                <input type="text" class="form-control" id="location" placeholder="Enter your location">
+            </div>
+            <div class="form-group">
+                <label for="department">Select Department:</label>
+                <select class="form-control" id="department">
+                    <option value="1">Disaster Management</option>
+                    <option value="2">Fire Department</option>
+                    <option value="3">Police Department</option>
+                    <option value="4">Hospital Department</option>
+                </select>
+            </div>
+            <button style="margin-top: 10px;" type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+  
+  </div>
+  <!-- Add this code inside the appropriate section of your dept.html file -->
+  <div id="info-section" class="content-section">
+    <h2>Information Section</h2>
+    <p>This section will be displayed when you click on Information in the navigation bar.</p>
+    <!-- Replace this line with your search form if needed -->
+    <input class="form-control" style="margin-bottom: 10px;" type="text" placeholder="Search" aria-label="Search">
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Location</th>
+                <th scope="col">Details</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            <!-- Repeat this structure for each information item -->
+            <tr>
+                <th scope="row">1</th>
+                <td>City Center</td>
+                <td>Emergency exit locations</td>
+            </tr>
+            <!-- Repeat for other information items -->
+        </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- Map Modal -->
+<div class="modal fade" id="mapModal" tabindex="-1" aria-labelledby="mapModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="mapModalLabel">Location Map</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Map container -->
+        <div id="map"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap 5 JS scripts -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Show the default section (Alerts) on page load
+    showSection('alerts-section');
+  });
+
+  function showSection(sectionId) {
+    // Hide all sections
+    $('.content-section').hide();
+
+    // Show the selected section
+    $('#' + sectionId).show();
+  }
+
+  function logout() {
+    // Add your logout logic here
+    alert('Logout clicked');
+  }
+
+  // Function to initialize the map
+  function initMap(location) {
+    var map = L.map('map').setView(location, 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Clear existing layers
+    map.eachLayer(function (layer) {
+      if (layer instanceof L.Marker || layer instanceof L.Popup) {
+        layer.remove();
+      }
+    });
+
+    L.marker(location).addTo(map);
+  }
+
+  // Handle modal show event
+  $('#mapModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);
+    var locationName = button.siblings('.loc').text();
+
+    // Parse the location and initialize the map
+    geocodeLocation(locationName);
+  });
+
+  // Function to geocode the location and initialize the map
+  function geocodeLocation(locationName) {
+    // Using OpenStreetMap Nominatim API for geocoding
+    var apiUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationName)}`;
+
+    // Fetch coordinates from the API
+    fetch(apiUrl)
+      .then(response => response.json())
+      .then(data => {
+        if (data && data.length > 0) {
+          var coordinates = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+          initMap(coordinates);
+        } else {
+          console.error('Unable to geocode location');
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching geocoding data', error);
+      });
+  }
+</script>
+
+</body>
+</html>
