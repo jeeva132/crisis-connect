@@ -14,12 +14,8 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
 # MySQL configuration
-app.config['MYSQL_HOST'] = 'crisis-chuppi013.b.aivencloud.com'
-app.config['MYSQL_PORT'] = 27684
-app.config['MYSQL_USER'] = 'avnadmin'
-app.config['MYSQL_PASSWORD'] = 'AVNS_b1K37KDsJgR6ltqyza0'
-app.config['MYSQL_DB'] = 'defaultdb'
-app.config['MYSQL_SSL_MODE'] = 'REQUIRED'
+import config
+app.config.from_object('config')
 
 mysql = MySQL(app)
 
