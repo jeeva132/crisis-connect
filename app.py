@@ -98,7 +98,7 @@ def user():
 # ML MODEL
 def train_model():
     # Load the dataset
-    data = pd.read_csv("../static/water.csv")
+    data = pd.read_csv(r"water.csv")
 
     # Split data into features (X) and labels (y)
     X = data[['threshold_value']]
@@ -117,7 +117,7 @@ model = train_model()
 
 def predict(ax, ay, az):
     # Load the earthquake detection data
-    data = pd.read_csv('../static/earth2.csv')
+    data = pd.read_csv(r'earth2.csv')
     
     # Check for missing values
     if data.isnull().values.any():
