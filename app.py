@@ -359,7 +359,7 @@ def add_alert():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0',port=5000,debug=True)
     # app.run(host='192.168.9.134',port=5000,debug=True)
 
 # GET DIRECTIONS FOR THE DEPAERTMENT WORK LIKE IT SHOULD FET THE DIRECTIOS FROM THE LOCATION WHERE IT IS LOCATED TO THE DISASTER HAPPEND PLACE
