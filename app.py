@@ -98,7 +98,7 @@ def user():
 # ML MODEL
 def train_model():
     # Load the dataset
-    data = pd.read_csv(r"C:\Users\hp\OneDrive\Documents\project\static\water.csv")
+    data = pd.read_csv("../static/water.csv")
 
     # Split data into features (X) and labels (y)
     X = data[['threshold_value']]
@@ -117,7 +117,7 @@ model = train_model()
 
 def predict(ax, ay, az):
     # Load the earthquake detection data
-    data = pd.read_csv(r'C:\Users\hp\OneDrive\Documents\project\static\earth2.csv')
+    data = pd.read_csv('../static/earth2.csv')
     
     # Check for missing values
     if data.isnull().values.any():
@@ -359,7 +359,7 @@ def add_alert():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0',port=5000,debug=True)
     # app.run(host='192.168.9.134',port=5000,debug=True)
 
 # GET DIRECTIONS FOR THE DEPAERTMENT WORK LIKE IT SHOULD FET THE DIRECTIOS FROM THE LOCATION WHERE IT IS LOCATED TO THE DISASTER HAPPEND PLACE
